@@ -147,22 +147,34 @@ class Total_Row():
         self.row_number = row_number
         self.cart = cart
         self.clear_cart_button = self.make_clear_cart_button()
+        self.save_and_close_button = self.make_save_and_close_button()
         self.checkout_button = self.make_checkout_button()
         self.total_label = self.make_total_label()
         self.total_box = self.make_total_box()
 
     def make_clear_cart_button(self):
         """Clear all the items out of the shopping cart, set all quantities to zero and redraw main form"""
-        # this button is bound at the main form, it clears and redraws the ENTIRE form, note the lack of a callback
+        # this button is bound in tkGUI_main_window, the lack of a callback
         # method here
         button = tk.Button(self.root, text='Clear Cart', fg='black', bg='red',
                            height=2, width=9)
         button.grid(row=self.row_number, column=0)
         return button
 
+    def make_save_and_close_button(self):
+        """Saves the cart to a JSON file and then closes the program"""
+        # this button is bound in tkGUI_main_window, note the lack of a callback
+        # method here
+        button = tk.Button(self.root, text='Save and close', fg='black', bg='red',
+                           height=2, width=9, wraplength=60)
+        button.grid(row=self.row_number, column=1)
+        return button
+
     def make_checkout_button(self):
+        """Destroys the root tk window which clears the cart and closes the program"""
+        # this button is bound in tkGUI_main_window, note the lack of a callback method here
         button = tk.Button(self.root, text='Checkout (Quit)', fg='black', bg='red',
-                           command=lambda: self.checkout_onclick(), height=2, width=9, wraplength=80)
+                           height=2, width=9, wraplength=80)
         button.grid(row=self.row_number, column=2)
         return button
 
@@ -188,7 +200,3 @@ class Total_Row():
         self.total_box.tag_add("all1", "1.0", tk.END)
         self.total_box.tag_configure("all1", justify="right")
         self.total_box["state"] = tk.DISABLED
-
-    def checkout_onclick(self):
-        """Destroys the root tk window which causes the termination of the window"""
-        self.root.destroy()

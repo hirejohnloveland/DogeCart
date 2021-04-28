@@ -1,3 +1,8 @@
+import json
+# import os.path
+from os import path
+
+
 class ShoppingCart():
     def __init__(self):
         # Pricelist needs to move to it's own class, then added to the shopping cart class as an attribute.
@@ -18,6 +23,7 @@ class ShoppingCart():
             "Eggs": 0,
             "Ice Cream": 0
         }
+        self.restore()
 
     def add_item(self, key):
         """Adds qty 1 of item (key) to the cart"""
@@ -61,3 +67,14 @@ class ShoppingCart():
         for values in subtotals.values():
             total += values
         return '${:,.2f}'.format(total)
+
+    def restore(self):
+        if path.isfile("my_cart.json"):
+            with open("my_cart.json", "r") as save_file:
+                data = json.load(save_file)
+                self.dict_quant = data
+            pass
+
+    def save(self):
+        with open("my_cart.json", "w") as save_file:
+            json.dump(self.dict_quant, save_file)
