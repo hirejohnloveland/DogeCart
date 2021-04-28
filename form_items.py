@@ -1,142 +1,194 @@
 import tkinter as tk
 import shopping_cart
-# Currently attempting to test refresh after callback with a call to the main_window and a refresher function located there.
-# This seems like a workable first implementation, but objects in the classes below shoould be decoupled from the interface.
-# Ultimately, I need the refresher function to be in the main window, activated by an event listener that listens for the click
-# events on the buttons below and then exectues refresh functions on each text box.
+
+
+class Header():
+    # Genearte the Header row with labels
+    def __init__(self, root, row_number):
+        self.root = root
+        self.row_number = row_number
+        self.remove_items_label = self.make_remove_items_label()
+        self.add_items_label = self.make_add_items_label()
+        self.qty_label = self.make_qty_label()
+        self.price_label = self.make_price_label()
+        self.subtotal_label = self.make_subtotal_label()
+
+    def make_remove_items_label(self):
+        label = tk.Label(self.root, text="Remove Items", fg='black', bg='light green',
+                         height=1, width=10)
+        label.grid(row=self.row_number, column=0)
+        return label
+
+    def make_add_items_label(self):
+        label = tk.Label(self.root, text="Add Items", fg='black', bg='light green',
+                         height=1, width=10)
+        label.grid(row=self.row_number, column=2)
+        return label
+
+    def make_qty_label(self):
+        label = tk.Label(self.root, text="Qty.", fg='black', bg='light green',
+                         height=1, width=10)
+        label.grid(row=self.row_number, column=4)
+        return label
+
+    def make_price_label(self):
+        label = tk.Label(self.root, text="Price", fg='black', bg='light green',
+                         height=1, width=10)
+        label.grid(row=self.row_number, column=5)
+
+    def make_subtotal_label(self):
+        label = tk.Label(self.root, text="Subtotal", fg='black', bg='light green',
+                         height=1, width=10)
+        label.grid(row=self.row_number, column=6)
 
 
 class Row_Items():
     # Generate the Row_Items class, which in turn generates all of it's necessary objects via it's class constructor.
-    def __init__(self, tkwindow, row_number, cart, dict_key):
-        self.gui = tkwindow
+    def __init__(self, root, row_number, total_row, cart, dict_key):
+        self.root = root
         self.row_number = row_number
+        self.total_row = total_row
         self.cart = cart
         self.dict_key = dict_key
-        self.parent_row = self
-        self.remove_button = Remove_Button(self.gui, self.row_number,
-                                           self.cart, self.dict_key)
-        # self.label = Row_Label(self.gui, self.row_number,
-        #                        self.cart, self.dict_key)
+        self.remove_button = self.make_remove_button()
         self.label = self.make_label()
-        self.add_button = Add_Button(self.gui, self.row_number,
-                                     self.cart, self.dict_key, self.parent_row)
-        self.qty_box = Qty_Box(self.gui, self.row_number,
-                               self.cart, self.dict_key)
-        self.pr_box = Pr_Box(self.gui, self.row_number,
-                             self.cart, self.dict_key)
-        self.sbtl_box = Sbtl_Box(self.gui, self.row_number,
-                                 self.cart, self.dict_key)
+        self.add_button = self.make_add_button()
+        self.qty_box = self.make_qty_box()
+        self.pr_box = self.make_pr_box()
+        self.sbtl_box = self.make_sbtl_box()
+
+    ##### Functions to create the buttons #####
+
+    def make_remove_button(self):
+        button = tk.Button(self.root, text="-", fg='black', bg='red', command=lambda: self.remove_onclick(),
+                           height=1, width=7)
+        button.grid(row=self.row_number, column=0)
+        return button
 
     def make_label(self):
-        label = tk.Label(self.gui, text=self.dict_key, fg='black', bg='red',
+        label = tk.Label(self.root, text=self.dict_key, fg='black', bg='red',
                          height=1, width=8)
         label.grid(row=self.row_number, column=1)
         return label
 
-    def Row_Items_refresh(self):
-        self.qty_box.qty_box_refresh()
-        self.pr_box.pr_box_refresh()
-        self.sbtl_box.sbtl_box_refresh()
+    def make_add_button(self):
+        button = tk.Button(self.root, text="+", fg='black', bg='red', command=lambda: self.add_onclick(),
+                           height=1, width=7)
+        button.grid(row=self.row_number, column=2)
+        return button
 
+    def make_qty_box(self):
+        box = tk.Text(self.root, height=1, width=4)
+        box.grid(row=self.row_number, column=4)
+        box.insert("1.0", self.cart.get_qty(self.dict_key))
+        box['state'] = tk.DISABLED
+        return box
 
-class Remove_Button():
-    def __init__(self, gui, row_number, cart, dict_key):
-        self.gui = gui
-        self.row_number = row_number
-        self.cart = cart
-        self.dict_key = dict_key
-        self.button = tk.Button(self.gui, text="-", fg='black', bg='red',
-                                height=1, width=7)
-        self.button.grid(row=self.row_number, column=0)
+    def make_pr_box(self):
+        box = tk.Text(self.root, height=1, width=5)
+        box.grid(row=self.row_number, column=5)
+        box.insert("1.0", self.cart.get_pr(self.dict_key))
+        box['state'] = tk.DISABLED
+        return box
 
+    def make_sbtl_box(self):
+        box = tk.Text(self.root, height=1, width=6)
+        box.grid(row=self.row_number, column=6)
+        box.insert("1.0", self.cart.item_total(self.dict_key))
+        box.tag_add("all", "1.0", tk.END)
+        box.tag_configure("all", justify="right")
+        box['state'] = tk.DISABLED
+        return box
 
-class Row_Label():
-    def __init__(self, gui, row_number, cart, dict_key):
-        self.gui = gui
-        self.row_number = row_number
-        self.cart = cart
-        self.dict_key = dict_key
-        # self.label = tk.Label(self.gui, text=self.dict_key, fg='black', bg='red',
-        #                       height=1, width=8)
-        # self.label.grid(row=self.row_number, column=1)
+    ####### Functions for the button click events and refreshing the form after items are added / removed #######
 
-
-class Add_Button():
-    def __init__(self, gui, row_number, cart, dict_key, parent):
-        self.gui = gui
-        self.row_number = row_number
-        self.cart = cart
-        self.dict_key = dict_key
-        self.parent = parent
-        self.button = tk.Button(self.gui, text="+", fg='black', bg='red', command=lambda: self.add_action(),
-                                height=1, width=7)
-        self.button.grid(row=self.row_number, column=2)
-
-    def add_action(self):
+    def add_onclick(self):
+        """Add selected item to the cart then refresh form"""
         self.cart.add_item(self.dict_key)
-        self.parent.Row_Items_refresh()
-        # def add_action(self):
-        #     # add item
-        #     # parent.row_items.refresh()
-        # self.parent.refresh
+        self.row_items_refresh()
 
+    def remove_onclick(self):
+        """Remove selected from the cart then refresh form"""
+        self.cart.remove_item(self.dict_key)
+        self.row_items_refresh()
 
-class Qty_Box():
-
-    def __init__(self, gui, row_number, cart, dict_key):
-        self.gui = gui
-        self.row_number = row_number
-        self.cart = cart
-        self.dict_key = dict_key
-        self.box = tk.Text(self.gui, height=1, width=4)
-        self.box.grid(row=self.row_number, column=4)
-        self.box.insert("1.0", self.cart.get_qty(self.dict_key))
-        self.box['state'] = tk.DISABLED
+    def row_items_refresh(self):
+        """Refresh the text boxes on this row and also the total row"""
+        self.qty_box_refresh()
+        self.pr_box_refresh()
+        self.sbtl_box_refresh()
+        self.total_row.total_row_refresh()
 
     def qty_box_refresh(self):
-        self.box['state'] = tk.NORMAL
-        self.box.delete("1.0", tk.END)
-        self.box.insert("1.0", self.cart.get_qty(self.dict_key))
-        self.box['state'] = tk.DISABLED
-
-
-class Pr_Box():
-    def __init__(self, gui, row_number, cart, dict_key):
-        self.gui = gui
-        self.row_number = row_number
-        self.cart = cart
-        self.dict_key = dict_key
-        self.box = tk.Text(self.gui, height=1, width=5)
-        self.box.grid(row=self.row_number, column=5)
-        self.box.insert("1.0", self.cart.get_pr(self.dict_key))
-        self.box['state'] = tk.DISABLED
+        self.qty_box['state'] = tk.NORMAL
+        self.qty_box.delete("1.0", tk.END)
+        self.qty_box.insert("1.0", self.cart.get_qty(self.dict_key))
+        self.qty_box['state'] = tk.DISABLED
 
     def pr_box_refresh(self):
-        self.box['state'] = tk.NORMAL
-        self.box.delete("1.0", tk.END)
-        self.box.insert("1.0", self.cart.get_pr(self.dict_key))
-        self.box['state'] = tk.DISABLED
-
-
-class Sbtl_Box():
-    def __init__(self, gui, row_number, cart, dict_key):
-        self.gui = gui
-        self.row_number = row_number
-        self.cart = cart
-        self.dict_key = dict_key
-        self.box = tk.Text(self.gui, height=1, width=6)
-        self.box.grid(row=self.row_number, column=6)
-        self.box.insert("1.0", self.cart.item_total(self.dict_key))
-        self.box.tag_add("all", "1.0", tk.END)
-        self.box.tag_configure("all", justify="right")
-        self.box['state'] = tk.DISABLED
+        self.pr_box['state'] = tk.NORMAL
+        self.pr_box.delete("1.0", tk.END)
+        self.pr_box.insert("1.0", self.cart.get_pr(self.dict_key))
+        self.pr_box['state'] = tk.DISABLED
 
     def sbtl_box_refresh(self):
 
-        self.box["state"] = tk.NORMAL
-        self.box.delete("1.0", tk.END)
-        self.box.insert("1.0", self.cart.item_total(self.dict_key))
-        self.box.tag_add("all", "1.0", tk.END)
-        self.box.tag_configure("all", justify="right")
-        self.box['state'] = tk.DISABLED
+        self.sbtl_box["state"] = tk.NORMAL
+        self.sbtl_box.delete("1.0", tk.END)
+        self.sbtl_box.insert("1.0", self.cart.item_total(self.dict_key))
+        self.sbtl_box.tag_add("all", "1.0", tk.END)
+        self.sbtl_box.tag_configure("all", justify="right")
+        self.sbtl_box['state'] = tk.DISABLED
+
+
+class Total_Row():
+    def __init__(self, root, row_number, cart):
+        self.root = root
+        self.row_number = row_number
+        self.cart = cart
+        self.clear_cart_button = self.make_clear_cart_button()
+        self.checkout_button = self.make_checkout_button()
+        self.total_label = self.make_total_label()
+        self.total_box = self.make_total_box()
+
+    def make_clear_cart_button(self):
+        """Clear all the items out of the shopping cart, set all quantities to zero and redraw main form"""
+        # this button is bound at the main form, it clears and redraws the ENTIRE form, note the lack of a callback
+        # method here
+        button = tk.Button(self.root, text='Clear Cart', fg='black', bg='red',
+                           height=2, width=9)
+        button.grid(row=self.row_number, column=0)
+        return button
+
+    def make_checkout_button(self):
+        button = tk.Button(self.root, text='Checkout (Quit)', fg='black', bg='red',
+                           command=lambda: self.checkout_onclick(), height=2, width=9, wraplength=80)
+        button.grid(row=self.row_number, column=2)
+        return button
+
+    def make_total_label(self):
+        label = tk.Label(self.root, text="Total", fg='black', bg='light green',
+                         height=1, width=7)
+        label.grid(row=self.row_number, column=5)
+        return label
+
+    def make_total_box(self):
+        total_box = tk.Text(self.root, height=1, width=7)
+        total_box.grid(row=self.row_number, column=6)
+        total_box.insert("1.0", self.cart.get_total())
+        total_box.tag_add("all1", "1.0", tk.END)
+        total_box.tag_configure("all1", justify="right")
+        total_box['state'] = tk.DISABLED
+        return total_box
+
+    def total_row_refresh(self):
+        self.total_box["state"] = tk.NORMAL
+        self.total_box.delete("1.0", tk.END)
+        self.total_box.insert("1.0", self.cart.get_total())
+        self.total_box.tag_add("all1", "1.0", tk.END)
+        self.total_box.tag_configure("all1", justify="right")
+        self.total_box["state"] = tk.DISABLED
+
+    def checkout_onclick(self):
+        """Destroys the root tk window which causes the termination of the window"""
+        self.root.destroy()
