@@ -1,7 +1,7 @@
 import tkinter as tk
 import shopping_cart
 
-# This module is responsible for the rows and buttons and textboxes that the GUI must display, as well as the callback
+# This module is responsible for the rows, images, buttons and textboxes that the GUI must display, as well as the callback
 # of the buttons and the refreshing of the form.  Notably, the buttons on the total_row do not have callback here, but are
 # bound to an event listenier in the tkGUI_main_window instead, as these buttons trigger global events in the app that must
 # be passed down to all the modules.
@@ -19,32 +19,34 @@ class Header():
         self.subtotal_label = self.make_subtotal_label()
 
     def make_remove_items_label(self):
-        label = tk.Label(self.root, text="Remove Items", fg='black', bg='light green',
-                         height=1, width=10)
+        label = tk.Label(self.root, text="Remove Items", fg='black', bg='turquoise4',
+                         height=1, width=12)
         label.grid(row=self.row_number, column=0)
         return label
 
     def make_add_items_label(self):
-        label = tk.Label(self.root, text="Add Items", fg='black', bg='light green',
+        label = tk.Label(self.root, text="Add Items", fg='black', bg='turquoise4',
                          height=1, width=10)
         label.grid(row=self.row_number, column=2)
         return label
 
     def make_qty_label(self):
-        label = tk.Label(self.root, text="Qty.", fg='black', bg='light green',
+        label = tk.Label(self.root, text="Qty.", fg='black', bg='turquoise4',
                          height=1, width=10)
         label.grid(row=self.row_number, column=4)
         return label
 
     def make_price_label(self):
-        label = tk.Label(self.root, text="Price", fg='black', bg='light green',
+        label = tk.Label(self.root, text="Price", fg='black', bg='turquoise4',
                          height=1, width=10)
         label.grid(row=self.row_number, column=5)
+        return label
 
     def make_subtotal_label(self):
-        label = tk.Label(self.root, text="Subtotal", fg='black', bg='light green',
+        label = tk.Label(self.root, text="Subtotal", fg='black', bg='turquoise4',
                          height=1, width=10)
         label.grid(row=self.row_number, column=6)
+        return label
 
 
 class Row_Items():
@@ -62,40 +64,40 @@ class Row_Items():
         self.sbtl_box = self.make_sbtl_box()
 
     def make_remove_button(self):
-        button = tk.Button(self.root, text="-", fg='black', bg='red', command=lambda: self.remove_onclick(),
+        button = tk.Button(self.root, text="-", fg='black', bg='DeepSkyBlue2', command=lambda: self.remove_onclick(),
                            height=1, width=7)
-        button.grid(row=self.row_number, column=0)
+        button.grid(row=self.row_number, column=0, pady=5)
         return button
 
     def make_label(self):
-        label = tk.Label(self.root, text=self.dict_key, fg='black', bg='red',
-                         height=1, width=8)
-        label.grid(row=self.row_number, column=1)
+        label = tk.Label(self.root, text=self.dict_key, fg='black', bg='DeepSkyBlue2',
+                         height=1, width=12)
+        label.grid(row=self.row_number, column=1, pady=5)
         return label
 
     def make_add_button(self):
-        button = tk.Button(self.root, text="+", fg='black', bg='red', command=lambda: self.add_onclick(),
+        button = tk.Button(self.root, text="+", fg='black', bg='DeepSkyBlue2', command=lambda: self.add_onclick(),
                            height=1, width=7)
-        button.grid(row=self.row_number, column=2)
+        button.grid(row=self.row_number, column=2, pady=5)
         return button
 
     def make_qty_box(self):
         box = tk.Text(self.root, height=1, width=4)
-        box.grid(row=self.row_number, column=4)
+        box.grid(row=self.row_number, column=4, pady=5)
         box.insert("1.0", self.cart.get_qty(self.dict_key))
         box['state'] = tk.DISABLED
         return box
 
     def make_pr_box(self):
         box = tk.Text(self.root, height=1, width=5)
-        box.grid(row=self.row_number, column=5)
+        box.grid(row=self.row_number, column=5, pady=5)
         box.insert("1.0", self.cart.get_pr(self.dict_key))
         box['state'] = tk.DISABLED
         return box
 
     def make_sbtl_box(self):
         box = tk.Text(self.root, height=1, width=6)
-        box.grid(row=self.row_number, column=6)
+        box.grid(row=self.row_number, column=6, pady=5)
         box.insert("1.0", self.cart.item_total(self.dict_key))
         box.tag_add("all", "1.0", tk.END)
         box.tag_configure("all", justify="right")
@@ -158,30 +160,31 @@ class Total_Row():
         """Clear all the items out of the shopping cart, set all quantities to zero and redraw main form"""
         # this button is bound in tkGUI_main_window, the lack of a callback
         # method here
-        button = tk.Button(self.root, text='Clear Cart', fg='black', bg='red',
-                           height=2, width=9)
-        button.grid(row=self.row_number, column=0)
+        button = tk.Button(self.root, text='Clear Cart', fg='black', bg='DeepSkyBlue2',
+                           height=2, width=9, wraplength=40)
+        button.grid(row=self.row_number, column=0, pady=10)
+
         return button
 
     def make_save_and_close_button(self):
         """Saves the cart to a JSON file and then closes the program"""
         # this button is bound in tkGUI_main_window, note the lack of a callback
         # method here
-        button = tk.Button(self.root, text='Save and close', fg='black', bg='red',
+        button = tk.Button(self.root, text='Save and close', fg='black', bg='DeepSkyBlue2',
                            height=2, width=9, wraplength=60)
-        button.grid(row=self.row_number, column=1)
+        button.grid(row=self.row_number, column=1, pady=10)
         return button
 
     def make_checkout_button(self):
         """Destroys the root tk window which clears the cart and closes the program"""
         # this button is bound in tkGUI_main_window, note the lack of a callback method here
-        button = tk.Button(self.root, text='Checkout (Quit)', fg='black', bg='red',
+        button = tk.Button(self.root, text='Checkout (Quit)', fg='black', bg='DeepSkyBlue2',
                            height=2, width=9, wraplength=80)
-        button.grid(row=self.row_number, column=2)
+        button.grid(row=self.row_number, column=2, pady=10)
         return button
 
     def make_total_label(self):
-        label = tk.Label(self.root, text="Total", fg='black', bg='light green',
+        label = tk.Label(self.root, text="Total", fg='black', bg='turquoise4',
                          height=1, width=7)
         label.grid(row=self.row_number, column=5)
         return label

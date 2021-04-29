@@ -1,6 +1,7 @@
 import tkinter as tk
 import shopping_cart
 import form_items
+from PIL import ImageTk, Image
 
 
 class GUI():
@@ -14,18 +15,27 @@ class GUI():
         # This is the main event loop of tkinter, it hosts the window and is the gateway for all code to execute.  When the window is
         # destroyed, the loop exits and the program ends.
         self.root = tk.Tk()  # Start of Window
-        canvas = tk.Canvas(self.root, width=900, height=400)  # window size
+        self.root.title("DogeCart")
+        canvas = tk.Canvas(self.root, width=700, height=150)  # window size
         canvas.grid(columnspan=10)  # Number of columns on the grid
+        self.__insert_bg_image()
         self.__draw_form()  # Entry into program###
         self.root.mainloop()  # End of Window
 
     def __draw_form(self):
         """Generate the rows to display and the event listeners for the main window"""
         self.__make_header_row(row_number=1)
-        total_row = self.__make_total_row(
-            row_number=len(self.cart.pricelist + 2))
+        total_row = self.__make_total_row(self.rowcount + 2)
         self.__make_row_items(rows := {}, total_row)
         self.__make_event_listeners(total_row)
+
+    def __insert_bg_image(self):
+        background_image = ImageTk.PhotoImage(
+            Image.open('Images/Doge_cart.png'))
+        background_label = tk.Label(self.root, image=background_image)
+        background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        # referene to image so that the garbage collector doesn't trash the image
+        background_label.image = background_image
 
     def __make_header_row(self, row_number=1):
         """Generates a header row at row position 1"""
