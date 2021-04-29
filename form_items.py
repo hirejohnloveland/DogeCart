@@ -1,6 +1,11 @@
 import tkinter as tk
 import shopping_cart
 
+# This module is responsible for the rows and buttons and textboxes that the GUI must display, as well as the callback
+# of the buttons and the refreshing of the form.  Notably, the buttons on the total_row do not have callback here, but are
+# bound to an event listenier in the tkGUI_main_window instead, as these buttons trigger global events in the app that must
+# be passed down to all the modules.
+
 
 class Header():
     # Genearte the Header row with labels
@@ -43,7 +48,6 @@ class Header():
 
 
 class Row_Items():
-    # Generate the Row_Items class, which in turn generates all of it's necessary objects via it's class constructor.
     def __init__(self, root, row_number, total_row, cart, dict_key):
         self.root = root
         self.row_number = row_number
@@ -56,8 +60,6 @@ class Row_Items():
         self.qty_box = self.make_qty_box()
         self.pr_box = self.make_pr_box()
         self.sbtl_box = self.make_sbtl_box()
-
-    ##### Functions to create the buttons #####
 
     def make_remove_button(self):
         button = tk.Button(self.root, text="-", fg='black', bg='red', command=lambda: self.remove_onclick(),
