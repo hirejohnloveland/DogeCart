@@ -9,7 +9,7 @@ import shopping_cart
 
 class Header():
     # Genearte the Header row with labels
-    def __init__(self, root, row_number):
+    def __init__(self, root, row_number: int):
         self.root = root
         self.row_number = row_number
         self.remove_items_label = self.make_remove_items_label()
@@ -50,7 +50,7 @@ class Header():
 
 
 class Row_Items():
-    def __init__(self, root, row_number, total_row, cart, dict_key):
+    def __init__(self, root, row_number: int, total_row, cart: shopping_cart.ShoppingCart(), dict_key: str):
         self.root = root
         self.row_number = row_number
         self.total_row = total_row
@@ -146,7 +146,7 @@ class Row_Items():
 
 
 class Total_Row():
-    def __init__(self, root, row_number, cart):
+    def __init__(self, root, row_number: int, cart: shopping_cart.ShoppingCart()):
         self.root = root
         self.row_number = row_number
         self.cart = cart

@@ -32,7 +32,7 @@ class Data_Manager():
         # they would not be able to be added to the cart. Conversely, if items are no longer available on the pricelist,
         # they would otherwise need to be purged from the cart once loaded.
         cart = {}
-        for items, prices in self.pricelist.items():
+        for items in self.pricelist.keys():
             cart[items] = 0
         if not self.saved_cart:
             return cart

@@ -26,7 +26,8 @@ class GUI():
         """Generate the rows to display and the event listeners for the main window"""
         self.__make_header_row(row_number=1)
         total_row = self.__make_total_row(self.rowcount + 2)
-        self.__make_row_items(rows := {}, total_row)
+
+        self.__make_row_items(total_row)
         self.__make_event_listeners(total_row)
 
     def __insert_bg_image(self):
@@ -39,9 +40,9 @@ class GUI():
 
     def __make_header_row(self, row_number=1):
         """Generates a header row at row position 1"""
-        header_row = form_items.Header(self.root, row_number)
+        form_items.Header(self.root, row_number)
 
-    def __make_total_row(self, row_number):
+    def __make_total_row(self, row_number: int):
         """Geneartes the last row on the form with totals."""
         # This function MUST be called before the rows are generated with
         # generate_row_items, because the total_row object is passed an argument in order to allow the buttons on each row to see
@@ -49,9 +50,10 @@ class GUI():
         total_row = form_items.Total_Row(self.root, row_number, self.cart)
         return total_row
 
-    def __make_row_items(self, rows, total_row):
+    def __make_row_items(self, total_row):
         """Generates a dynamic number of rows with buttons and boxes to match the number of items in the price list dictionary."""
         index = 2  # This is the first row the data will display on.  2 assumes that there is a header row, otherwise set to 1.
+        rows = {}
         for key in self.cart.pricelist.keys():
             rows[index] = form_items.Row_Items(
                 self.root, index, total_row, self.cart, key)
