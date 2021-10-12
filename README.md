@@ -2,13 +2,13 @@
 
 DogeCart was my first forray into the TKinter GUI framework.  It is an object oriented shopping cart program with a Doge themed GUI.  It consists of the following elements:
 
-##Data Files - 
+Data Files - 
 
 pricelist.csv - .csv file where a non-programmer can add or remove products and adjust their prices.
  
 my_cart.json - storage file which tracks the users cart for data persistance.
  
-##Modules
+Modules
 
 main - entry point
   
